@@ -1,7 +1,12 @@
-from os import system
-system('cls')
+from os import system, name
 import requests
 
+def clrscr():
+    if name=='nt':
+        system('cls')
+    else:
+        system('clear')
+    return
 def genText(query):
     headersdata={
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:133.0) Gecko/20100101 Firefox/133.0",
@@ -17,11 +22,19 @@ def genText(query):
         "Pragma": "no-cache",
         "Cache-Control": "no-cache"
     }
-    jsondata="[{\"reply\":\""+query+"\",\"variationsNumber\":1,\"emoji\":false,\"replyLength\":\"shorter\",\"writingStyle\":\"casual\",\"type\":\"generic-reply\",\"replyInstructions\":\"|||Write Each Answer in 3 vertical bars with no space around them like this|||\",\"hashtags\":false,\"trackedAnon\":null,\"anonymousId\":\"\"}]"
-
+    jsondata="[{\"reply\":\""+query+"\",\"variationsNumber\":1,\"emoji\":false,\"replyLength\":\"shorter\",\"writingStyle\":\"casual\",\"type\":\"generic-reply\",\"replyInstructions\":\"You are in conversation with me\",\"hashtags\":false,\"trackedAnon\":null,\"anonymousId\":\"\"}]"
     x=requests.post('https://free-tools.planable.io/reply-generator/generic-reply',data=jsondata,headers=headersdata)
-    
-    print(x.text)
-    return x.text.replace('â','\'').replace('\\n',"\n").replace('ï¸','').split('|||')[1]
+    response = x.text.replace('â','\'').replace('\\n',"\n").replace('ï¸','')
+    return response[45:len(response)-4]
 
-print(genText(input('Promt: ')))
+def main():
+    while 1:
+        prompt=input('You: ')
+        response=genText(prompt)
+        print('Chatbot: ',response)
+        if prompt.lower().__contains__('bye'):
+            return
+
+if __name__=='__main__':
+    clrscr()
+    main()
